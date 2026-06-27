@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "REAPER EMPIRE BOT"
+version = "1.0.0"
+id = "artifacts/reaper-empire"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24893
+
+[services.development]
+run = "pnpm --filter @workspace/reaper-empire run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/reaper-empire", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/reaper-empire/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24893"
+BASE_PATH = "/"

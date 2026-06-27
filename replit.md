@@ -1,45 +1,61 @@
-# [Project name]
+# REAPER EMPIRE BOT — Website
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A premium dark marketing website for the REAPER EMPIRE WhatsApp Bot. Sukuna-inspired aesthetic with black, crimson red, and blood red color palette. Built with React + Vite.
 
 ## Run & Operate
 
+- `pnpm --filter @workspace/reaper-empire run dev` — run the website frontend (port assigned by workflow)
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Frontend: React 19 + Vite + Tailwind CSS
+- Routing: Wouter
+- Animations: Framer Motion
+- Icons: Lucide React + React Icons
+- Fonts: Cinzel (gothic titles) + Inter (body) + JetBrains Mono (code/logs)
+- API: Express 5 (shared api-server artifact)
+- DB: PostgreSQL + Drizzle ORM (not yet used by this site)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/reaper-empire/src/pages/` — all page components (Home, Features, Commands, Gallery, HowItWorks, TestBot, DashboardPreview, FAQ, Pricing)
+- `artifacts/reaper-empire/src/components/` — Navbar, Footer, ParticleBackground, SectionBackground
+- `artifacts/reaper-empire/src/index.css` — global dark theme, CSS custom properties, animation keyframes
+- `lib/api-spec/openapi.yaml` — API contract source of truth
+- `artifacts/api-server/src/routes/` — backend route handlers
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- **Presentation-first, no backend yet**: The pairing UI at `/test` is a frontend-only placeholder. `setPairingCode` is intentionally never called — per spec, no fake codes. Wire up `POST /api/pair` when backend is ready.
+- **CSS-only particle backgrounds**: No canvas/WebGL. Floating red dot particles use pure CSS keyframe animations for performance.
+- **Dark-only theme**: No light mode. All CSS variables locked to dark Sukuna palette.
+- **Cinzel font**: Imported via Google Fonts CDN for gothic/ancient title aesthetic.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+The Reaper Empire Bot is a feature-rich WhatsApp bot. The website:
+- Markets the bot with a dark, powerful, Sukuna-inspired aesthetic
+- Shows all bot features, commands, and how pairing works
+- Provides a pairing UI ready to receive codes from the backend API
+- Includes a dashboard preview showing bot stats, plugins, and live logs
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- OWNER: +234 814 831 0933
+- DEV: +234 903 565 9542
+- Theme: Black, Crimson Red, Blood Red, Dark Gray, White text
+- No light mode, no heavy animations, no fake data in pairing UI
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Do NOT call `configureWorkflow` for artifact services — use `WorkflowsRestart` with the exact managed name `artifacts/reaper-empire: web`
+- Do NOT generate or display fake pairing codes in TestBot.tsx — the pairing code box is intentionally empty until backend API is connected
+- The Cinzel font requires internet access to load from Google Fonts CDN
 
 ## Pointers
 
 - See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- Pairing API placeholder: `POST /api/pair { phoneNumber } → { pairingCode }` — wire up in `artifacts/api-server/src/routes/` when ready
