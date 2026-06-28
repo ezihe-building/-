@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "name": "reaper-empire-bot",
+  "framework": "vite",
+  "buildCommand": "pnpm --filter @workspace/reaper-empire run build",
+  "outputDirectory": "artifacts/reaper-empire/dist/public",
+  "installCommand": "pnpm install",
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}

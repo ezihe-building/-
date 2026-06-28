@@ -110,16 +110,16 @@ export function DashboardPreview() {
               </div>
               <div className="p-4 font-mono text-sm overflow-y-auto flex-1 flex flex-col justify-end">
                 <div className="space-y-1">
-                  {visibleLogs.map((log, i) => (
+                  {visibleLogs.filter(Boolean).map((log, i) => (
                     <motion.div
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       className={
-                        log.includes('SYSTEM:') ? 'text-blue-400' :
-                        log.includes('OWNER:') ? 'text-primary font-bold' :
-                        log.includes('GROUP:') ? 'text-yellow-400' :
-                        log.includes('NETWORK:') ? 'text-purple-400' :
+                        log?.includes('SYSTEM:') ? 'text-blue-400' :
+                        log?.includes('OWNER:') ? 'text-primary font-bold' :
+                        log?.includes('GROUP:') ? 'text-yellow-400' :
+                        log?.includes('NETWORK:') ? 'text-purple-400' :
                         'text-gray-300'
                       }
                     >

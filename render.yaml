@@ -1,0 +1,14 @@
+services:
+  - type: static
+    name: reaper-empire-bot
+    runtime: node
+    buildCommand: pnpm install && pnpm --filter @workspace/reaper-empire run build
+    staticPublishPath: ./artifacts/reaper-empire/dist/public
+    pullRequestPreviewsEnabled: true
+    routes:
+      - type: rewrite
+        source: /assets/(.*)
+        destination: /assets/$1
+      - type: rewrite
+        source: /.*
+        destination: /index.html

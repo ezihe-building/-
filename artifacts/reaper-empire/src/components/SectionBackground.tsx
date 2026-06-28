@@ -1,5 +1,6 @@
 import { ParticleBackground } from './ParticleBackground';
 import { SukunaSlideshow } from './SukunaSlideshow';
+import { SukunaCorner } from './SukunaCorner';
 
 interface SectionBackgroundProps {
   children: React.ReactNode;
@@ -8,6 +9,9 @@ interface SectionBackgroundProps {
   withGlow?: boolean;
   glowPosition?: 'center' | 'top' | 'bottom' | 'top-right' | 'bottom-left';
   withSukunaBackground?: boolean;
+  withSukunaCorner?: boolean;
+  sukunaCornerPosition?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  sukunaCornerSize?: 'sm' | 'md' | 'lg';
 }
 
 export function SectionBackground({
@@ -17,6 +21,9 @@ export function SectionBackground({
   withGlow = false,
   glowPosition = 'center',
   withSukunaBackground = false,
+  withSukunaCorner = true,
+  sukunaCornerPosition = 'bottom-right',
+  sukunaCornerSize = 'md',
 }: SectionBackgroundProps) {
 
   const getGlowClasses = () => {
@@ -57,6 +64,15 @@ export function SectionBackground({
 
       {/* Optional particles */}
       {withParticles && <ParticleBackground />}
+
+      {/* Sukuna corner image */}
+      {withSukunaCorner && (
+        <SukunaCorner
+          position={sukunaCornerPosition}
+          size={sukunaCornerSize}
+          interval={12000}
+        />
+      )}
 
       {/* Content wrapper */}
       <div className="relative z-10 w-full h-full">
