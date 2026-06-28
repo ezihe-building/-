@@ -5,7 +5,7 @@ A premium dark marketing website for the REAPER EMPIRE WhatsApp Bot. Sukuna-insp
 ## Run & Operate
 
 - `pnpm --filter @workspace/reaper-empire run dev` — run the website frontend (port assigned by workflow)
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port assigned by workflow, see `PORT` env var)
 - `pnpm run typecheck` — full typecheck across all packages
 
 ## Stack
@@ -27,9 +27,22 @@ A premium dark marketing website for the REAPER EMPIRE WhatsApp Bot. Sukuna-insp
 - `lib/api-spec/openapi.yaml` — API contract source of truth
 - `artifacts/api-server/src/routes/` — backend route handlers
 
+## Pairing API
+
+The `/test` page now calls the real pairing backend:
+
+- `POST /api/pair` — submit `phoneNumber`; backend stores the request and (optionally) notifies the Telegram bot.
+- `POST /api/pair/code` — the Telegram bot pushes the generated pairing code back to this endpoint (`{ phoneNumber, pairingCode }`).
+- `GET /api/pair/status?phoneNumber=...` — frontend polls this until the pairing code is returned.
+
+Required environment:
+- `TELEGRAM_BOT_TOKEN` (Replit Secret) — used to notify the Telegram bot about new pairing requests.
+- `TELEGRAM_ADMIN_CHAT_ID` (env var) — Telegram chat/group where the bot receives pairing requests. Optional; without it the backend still accepts webhook pushes from the bot, but it cannot notify the bot automatically.
+
+Dev proxy: the Vite dev server forwards `/api/*` to `API_SERVER_URL` (defaults to `http://localhost:8080`) so the frontend can call the backend from the Replit preview.
+
 ## Architecture decisions
 
-- **Presentation-first, no backend yet**: The pairing UI at `/test` is a frontend-only placeholder. `setPairingCode` is intentionally never called — per spec, no fake codes. Wire up `POST /api/pair` when backend is ready.
 - **CSS-only particle backgrounds**: No canvas/WebGL. Floating red dot particles use pure CSS keyframe animations for performance.
 - **Dark-only theme**: No light mode. All CSS variables locked to dark Sukuna palette.
 - **Cinzel font**: Imported via Google Fonts CDN for gothic/ancient title aesthetic.
@@ -39,7 +52,7 @@ A premium dark marketing website for the REAPER EMPIRE WhatsApp Bot. Sukuna-insp
 The Reaper Empire Bot is a feature-rich WhatsApp bot. The website:
 - Markets the bot with a dark, powerful, Sukuna-inspired aesthetic
 - Shows all bot features, commands, and how pairing works
-- Provides a pairing UI ready to receive codes from the backend API
+- Provides a live pairing UI that receives real pairing codes from the backend API
 - Includes a dashboard preview showing bot stats, plugins, and live logs
 
 ## User preferences
@@ -52,10 +65,10 @@ The Reaper Empire Bot is a feature-rich WhatsApp bot. The website:
 ## Gotchas
 
 - Do NOT call `configureWorkflow` for artifact services — use `WorkflowsRestart` with the exact managed name `artifacts/reaper-empire: web`
-- Do NOT generate or display fake pairing codes in TestBot.tsx — the pairing code box is intentionally empty until backend API is connected
+- Do NOT generate or display fake pairing codes in TestBot.tsx — the pairing code box is empty until the backend returns a real code
 - The Cinzel font requires internet access to load from Google Fonts CDN
 
 ## Pointers
 
 - See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
-- Pairing API placeholder: `POST /api/pair { phoneNumber } → { pairingCode }` — wire up in `artifacts/api-server/src/routes/` when ready
+- Pairing API implementation: `artifacts/api-server/src/routes/pair.ts`

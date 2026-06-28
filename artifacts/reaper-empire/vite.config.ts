@@ -15,6 +15,11 @@ if (Number.isNaN(port) || port <= 0) {
 
 const basePath = process.env.BASE_PATH ?? '/';
 
+// In local/Replit dev, proxy /api to the api-server workflow so the
+// pairing flow can be tested from the frontend preview. In production
+// builds this is ignored; use VITE_API_BASE_URL to point to the deployed API.
+const apiServerUrl = process.env.API_SERVER_URL ?? 'http://localhost:8080';
+
 export default defineConfig({
   base: basePath,
   plugins: [
@@ -57,6 +62,12 @@ export default defineConfig({
     strictPort: true,
     host: '0.0.0.0',
     allowedHosts: true,
+    proxy: {
+      '/api': {
+        target: apiServerUrl,
+        changeOrigin: true,
+      },
+    },
     fs: {
       strict: true,
     },
