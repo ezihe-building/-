@@ -1,5 +1,6 @@
 import { Link } from 'wouter';
 import { FaDiscord, FaGithub, FaTiktok, FaWhatsapp, FaTelegram } from 'react-icons/fa';
+import logo from '@assets/generated_images/reaper-logo.png';
 
 export function Footer() {
   return (
@@ -11,9 +12,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
 
           <div className="space-y-4 lg:col-span-2">
-            <Link href="/" className="inline-block">
-              <span className="text-2xl font-cinzel font-bold text-primary text-glow">
-                ⚔ REAPER EMPIRE BOT
+            <Link href="/" className="inline-flex items-center gap-3">
+              <img
+                src={logo}
+                alt="Reaper Empire Bot"
+                className="h-12 w-12 object-contain drop-shadow-[0_0_10px_rgba(220,20,60,0.7)]"
+              />
+              <span className="text-2xl font-scary font-bold text-primary text-glow">
+                REAPER EMPIRE BOT
               </span>
             </Link>
             <p className="text-white/60 max-w-sm">

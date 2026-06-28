@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Nosifer&family=Creepster&family=Rubik+Glitch&family=Metal+Mania&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
@@ -118,6 +118,9 @@
   --app-font-serif: Georgia, serif;
   --app-font-mono: 'JetBrains Mono', Menlo, monospace;
   --app-font-cinzel: 'Cinzel', serif;
+  --app-font-scary: 'Nosifer', 'Creepster', cursive;
+  --app-font-scary-alt: 'Creepster', 'Metal Mania', cursive;
+  --app-font-glitch: 'Rubik Glitch', cursive;
 
   --radius: 0.5rem;
   
@@ -150,6 +153,29 @@
 
   h1, h2, h3, h4, h5, h6, .font-cinzel {
     font-family: var(--app-font-cinzel);
+  }
+
+  .font-scary {
+    font-family: var(--app-font-scary);
+  }
+
+  .font-scary-alt {
+    font-family: var(--app-font-scary-alt);
+  }
+
+  .font-glitch {
+    font-family: var(--app-font-glitch);
+  }
+
+  h1, h2 {
+    font-family: var(--app-font-scary);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  h3, h4 {
+    font-family: var(--app-font-scary-alt);
+    font-weight: 400;
   }
 }
 

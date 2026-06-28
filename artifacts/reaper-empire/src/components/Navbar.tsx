@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Menu, X, TerminalSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from '@assets/generated_images/reaper-logo.png';
 
 const NAV_LINKS = [
   { name: 'Home', href: '/' },
@@ -42,9 +43,14 @@ export function Navbar() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
 
-          <Link href="/" className="flex items-center gap-2 group z-50">
-            <span className="text-xl md:text-2xl font-cinzel font-bold text-primary text-glow transition-all duration-300 group-hover:brightness-125">
-              ⚔ REAPER EMPIRE
+          <Link href="/" className="flex items-center gap-3 group z-50">
+            <img
+              src={logo}
+              alt="Reaper Empire Bot"
+              className="h-10 w-10 md:h-12 md:w-12 object-contain drop-shadow-[0_0_10px_rgba(220,20,60,0.7)] transition-all duration-300 group-hover:scale-110"
+            />
+            <span className="text-xl md:text-2xl font-scary font-bold text-primary text-glow transition-all duration-300 group-hover:brightness-125">
+              REAPER EMPIRE
             </span>
           </Link>
 

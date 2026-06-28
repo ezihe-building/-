@@ -6,6 +6,7 @@ import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { SukunaFrame } from './components/SukunaFrame';
+import { SukunaVoice } from './components/SukunaVoice';
 
 import { Home } from './pages/Home';
 import { Features } from './pages/Features';
@@ -26,6 +27,7 @@ function Router() {
       <SukunaFrame />
       <Navbar />
       <main className="flex-1">
+        <SukunaVoice />
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/features" component={Features} />

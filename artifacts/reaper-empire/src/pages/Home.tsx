@@ -3,70 +3,80 @@ import { motion } from 'framer-motion';
 import { Zap, Shield, Bot, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { SectionBackground } from '../components/SectionBackground';
 import { SukunaSlideshow } from '../components/SukunaSlideshow';
+import { HeroSukunaSlideshow } from '../components/HeroSukunaSlideshow';
 
 export function Home() {
   return (
     <div className="min-h-screen flex flex-col pt-16">
 
       {/* Hero Section */}
-      <SectionBackground withParticles withGlow glowPosition="center" withSukunaBackground className="min-h-[90vh] flex flex-col justify-center items-center text-center px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-5xl mx-auto space-y-8 relative z-10"
-        >
-          <div className="glass inline-block mb-4 px-4 py-1.5 rounded-full">
-            <span className="text-primary text-sm font-bold tracking-widest uppercase flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              System Online
-            </span>
+      <SectionBackground withParticles withGlow glowPosition="center" withSukunaBackground className="min-h-[90vh] flex flex-col justify-center px-4 py-20">
+        <div className="container mx-auto max-w-7xl relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Hero Text */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="space-y-8 text-center lg:text-left"
+            >
+              <div className="glass inline-block px-4 py-1.5 rounded-full">
+                <span className="text-primary text-sm font-bold tracking-widest uppercase flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                  System Online
+                </span>
+              </div>
+
+              <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-scary font-black text-white leading-tight drop-shadow-2xl">
+                <span className="block text-glow text-primary mb-2">𒋲ᬼ⃟𓁹</span>
+                THE REAPER EMPIRE BOT
+                <span className="block text-glow text-primary mt-2">𒋲ᬼ⃟𓁹</span>
+              </h1>
+
+              <p className="text-xl md:text-2xl font-light text-white/90 max-w-3xl mx-auto lg:mx-0 tracking-wide drop-shadow-lg">
+                The Most Powerful WhatsApp Bot. <span className="text-white font-medium">Forged in Darkness.</span>
+              </p>
+
+              <p className="text-base md:text-lg text-white/70 max-w-2xl mx-auto lg:mx-0">
+                Automate your WhatsApp with 50+ commands, AI features, group management, anti-delete, and a full dashboard. Built for power users.
+              </p>
+
+              <div className="flex flex-col sm:flex-row flex-wrap justify-center lg:justify-start items-center gap-4 pt-4">
+                <Link
+                  href="/test"
+                  className="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded hover:bg-primary/90 transition-all glow-red text-lg uppercase tracking-wider"
+                >
+                  Test Out The Bot Today
+                </Link>
+
+                <Link
+                  href="/features"
+                  className="glass-light w-full sm:w-auto px-8 py-4 text-white font-bold rounded transition-all hover:border-primary/50 uppercase tracking-wider"
+                >
+                  Features
+                </Link>
+
+                <Link
+                  href="/commands"
+                  className="glass-light w-full sm:w-auto px-8 py-4 text-white/80 hover:text-white font-bold rounded transition-all hover:border-primary/50 uppercase tracking-wider"
+                >
+                  Documentation
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Hero Sukuna Slideshow */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="relative"
+            >
+              <HeroSukunaSlideshow interval={8000} className="w-full" />
+              <div className="absolute -inset-4 bg-primary/10 blur-3xl rounded-full -z-10 pointer-events-none" />
+            </motion.div>
           </div>
-
-          <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-cinzel font-black text-white leading-tight drop-shadow-2xl">
-            <span className="block text-glow text-primary mb-2">𒋲ᬼ⃟𓁹</span>
-            THE REAPER EMPIRE BOT
-            <span className="block text-glow text-primary mt-2">𒋲ᬼ⃟𓁹</span>
-          </h1>
-
-          <p className="text-xl md:text-2xl font-light text-white/90 max-w-3xl mx-auto tracking-wide drop-shadow-lg">
-            The Most Powerful WhatsApp Bot. <span className="text-white font-medium">Forged in Darkness.</span>
-          </p>
-
-          <p className="text-base md:text-lg text-white/70 max-w-2xl mx-auto">
-            Automate your WhatsApp with 50+ commands, AI features, group management, anti-delete, and a full dashboard. Built for power users.
-          </p>
-
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 pt-8">
-            <Link
-              href="/test"
-              className="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded hover:bg-primary/90 transition-all glow-red text-lg uppercase tracking-wider"
-            >
-              Test Out The Bot Today
-            </Link>
-
-            <Link
-              href="/features"
-              className="glass-light w-full sm:w-auto px-8 py-4 text-white font-bold rounded transition-all hover:border-primary/50 uppercase tracking-wider"
-            >
-              Features
-            </Link>
-
-            <Link
-              href="/commands"
-              className="glass-light w-full sm:w-auto px-8 py-4 text-white/80 hover:text-white font-bold rounded transition-all hover:border-primary/50 uppercase tracking-wider"
-            >
-              Documentation
-            </Link>
-
-            <Link
-              href="/dashboard"
-              className="glass-light w-full sm:w-auto px-8 py-4 text-white/80 hover:text-white font-bold rounded transition-all hover:border-primary/50 uppercase tracking-wider"
-            >
-              Dashboard
-            </Link>
-          </div>
-        </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0 }}

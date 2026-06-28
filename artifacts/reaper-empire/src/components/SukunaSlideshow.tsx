@@ -7,6 +7,11 @@ import sukuna2 from '@assets/generated_images/sukuna2.jpg';
 import sukuna3 from '@assets/generated_images/sukuna3.jpg';
 import sukuna4 from '@assets/generated_images/sukuna4.jpg';
 import sukuna5 from '@assets/generated_images/sukuna5.jpg';
+import sukuna6 from '@assets/generated_images/sukuna6.jpg';
+import sukuna7 from '@assets/generated_images/sukuna7.jpg';
+import sukuna8 from '@assets/generated_images/sukuna8.jpg';
+import sukuna9 from '@assets/generated_images/sukuna9.jpg';
+import sukuna10 from '@assets/generated_images/sukuna10.jpg';
 
 const SUKUNA_SLIDES = [
   {
@@ -33,6 +38,31 @@ const SUKUNA_SLIDES = [
     image: sukuna5,
     quote: "Are you the strongest because you're Satoru Gojo? Or are you Satoru Gojo because you're the strongest?",
     context: "Sukuna speaks to the nature of supremacy.",
+  },
+  {
+    image: sukuna6,
+    quote: "The weak have no right to stand before me.",
+    context: "Sukuna's presence alone demands submission.",
+  },
+  {
+    image: sukuna7,
+    quote: "This world belongs to the strong.",
+    context: "Ruin follows wherever the King of Curses walks.",
+  },
+  {
+    image: sukuna8,
+    quote: "Your fear is the only truth you know.",
+    context: "Sukuna feeds on the terror of his enemies.",
+  },
+  {
+    image: sukuna9,
+    quote: "Bow, or be broken.",
+    context: "The cursed throne accepts no rivals.",
+  },
+  {
+    image: sukuna10,
+    quote: "One strike is all it takes.",
+    context: "Sukuna's domain expansion leaves nothing behind.",
   },
 ];
 
