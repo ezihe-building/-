@@ -5,6 +5,7 @@ import { Route, Switch, Router as WouterRouter } from 'wouter';
 
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { SukunaFrame } from './components/SukunaFrame';
 
 import { Home } from './pages/Home';
 import { Features } from './pages/Features';
@@ -22,6 +23,7 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <div className="flex flex-col min-h-screen w-full relative">
+      <SukunaFrame />
       <Navbar />
       <main className="flex-1">
         <Switch>

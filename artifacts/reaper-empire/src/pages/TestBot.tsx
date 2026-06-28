@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2, Copy, CheckCircle2 } from 'lucide-react';
+import { FaTelegram } from 'react-icons/fa';
 import { SectionBackground } from '../components/SectionBackground';
 import { SukunaSlideshow } from '../components/SukunaSlideshow';
 
@@ -141,6 +142,29 @@ export function TestBot() {
                 <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded text-xs mt-4 flex items-start gap-2">
                   <span className="text-lg">⚠</span>
                   <p>Only enter your real WhatsApp number. Do not close this page while pairing is in progress.</p>
+                </div>
+              </div>
+
+              {/* Telegram Pairing CTA */}
+              <div className="mt-8 p-6 rounded-lg border border-primary/30 bg-primary/5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                <div className="relative z-10 flex flex-col items-center text-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#229ED9] flex items-center justify-center text-white shadow-lg">
+                    <FaTelegram size={24} />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold mb-1">Prefer to pair on Telegram?</p>
+                    <p className="text-white/60 text-xs mb-4">Click below to message the developer and get your pairing code instantly.</p>
+                  </div>
+                  <a
+                    href="https://t.me/THE_REAPERDEV"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-[#229ED9] hover:bg-[#1d8bc2] text-white font-bold py-3 rounded-md uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                  >
+                    <FaTelegram size={18} />
+                    Pair on Telegram
+                  </a>
                 </div>
               </div>
             </motion.div>

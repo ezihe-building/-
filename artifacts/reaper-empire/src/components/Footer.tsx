@@ -1,5 +1,5 @@
 import { Link } from 'wouter';
-import { FaDiscord, FaGithub, FaTiktok, FaWhatsapp } from 'react-icons/fa';
+import { FaDiscord, FaGithub, FaTiktok, FaWhatsapp, FaTelegram } from 'react-icons/fa';
 
 export function Footer() {
   return (
@@ -32,6 +32,9 @@ export function Footer() {
               <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
                 <FaWhatsapp size={18} />
               </a>
+              <a href="https://t.me/THE_REAPERDEV" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
+                <FaTelegram size={18} />
+              </a>
             </div>
           </div>
 
@@ -47,9 +50,17 @@ export function Footer() {
 
           <div className="space-y-4">
             <h4 className="text-foreground font-cinzel font-bold tracking-wider">Contact</h4>
-            <ul className="space-y-2">
-              <li className="text-white/60 font-mono text-sm">+234 814 831 0933</li>
-              <li className="text-white/60 font-mono text-sm">+234 903 565 9542 <span className="text-xs text-primary">(dev)</span></li>
+            <ul className="space-y-3">
+              <li>
+                <div className="text-primary text-xs font-bold uppercase tracking-wider">Owner</div>
+                <div className="text-white/90 font-mono text-sm">𒋲ᬼ⃟𓁹 THE REAPER EMPIRE BOT</div>
+                <div className="text-white/60 font-mono text-sm">+234 814 831 0933</div>
+              </li>
+              <li>
+                <div className="text-primary text-xs font-bold uppercase tracking-wider">Dev</div>
+                <div className="text-white/90 font-mono text-sm">𒋲ᬼ⃟𓁹 𖤍𒋲ᬼ⃟𓁹S²十ƬƐƦƦꙮƦïṨT𒋲ᬼ⃟𓁹𖤍</div>
+                <div className="text-white/60 font-mono text-sm">+234 903 565 9542</div>
+              </li>
               <li className="pt-4">
                 <Link href="/test" className="text-primary hover:text-white transition-colors text-sm font-bold border-b border-primary/30 pb-1">
                   Connect Your Bot Now
