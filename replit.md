@@ -32,12 +32,13 @@ A premium dark marketing website for the REAPER EMPIRE WhatsApp Bot. Sukuna-insp
 The `/test` page now calls the real pairing backend:
 
 - `POST /api/pair` — submit `phoneNumber`; backend stores the request and (optionally) notifies the Telegram bot.
-- `POST /api/pair/code` — the Telegram bot pushes the generated pairing code back to this endpoint (`{ phoneNumber, pairingCode }`).
+- `POST /api/pair/code` — the Telegram bot pushes the generated pairing code back to this endpoint (`{ phoneNumber, pairingCode }`). **Must include the bot token in the `Authorization: Bearer <TELEGRAM_BOT_TOKEN>` header.**
 - `GET /api/pair/status?phoneNumber=...` — frontend polls this until the pairing code is returned.
 
 Required environment:
-- `TELEGRAM_BOT_TOKEN` (Replit Secret) — used to notify the Telegram bot about new pairing requests.
-- `TELEGRAM_ADMIN_CHAT_ID` (env var) — Telegram chat/group where the bot receives pairing requests. Optional; without it the backend still accepts webhook pushes from the bot, but it cannot notify the bot automatically.
+- `TELEGRAM_BOT_TOKEN` (Replit Secret) — used to notify the Telegram bot about new pairing requests and to authenticate the bot's webhook push.
+- `TELEGRAM_ADMIN_CHAT_ID` (env var) — Telegram chat/group where the bot receives pairing requests. Optional; without it the backend still accepts authenticated webhook pushes from the bot, but it cannot notify the bot automatically.
+- `VITE_API_BASE_URL` (env var) — absolute base URL of the deployed API server in production (e.g., `https://api.example.com`). Leave unset in dev where the Vite proxy handles `/api`.
 
 Dev proxy: the Vite dev server forwards `/api/*` to `API_SERVER_URL` (defaults to `http://localhost:8080`) so the frontend can call the backend from the Replit preview.
 

@@ -53,6 +53,18 @@ export function TestBot() {
         throw new Error(data.error || 'Failed to request pairing code');
       }
 
+      const data = await response.json().catch(() => ({ status: 'pending' }));
+
+      if (!data.notified && data.notificationError) {
+        setErrorMessage(
+          `Telegram notification failed: ${data.notificationError}. You can still pair via Telegram below.`,
+        );
+      } else if (!data.notified) {
+        setErrorMessage('Telegram notification could not be sent. Use the Telegram option below to pair.');
+      } else {
+        setErrorMessage(null);
+      }
+
       setStatus('polling');
       pollForCode(fullPhone);
     } catch (err) {
@@ -62,7 +74,8 @@ export function TestBot() {
   };
 
   const pollForCode = async (phoneNumber: string, attempt = 1) => {
-    if (attempt > 60) {
+    // Keep in sync with backend max window (100 attempts * 3s = 5 minutes).
+    if (attempt > 100) {
       setStatus('error');
       setErrorMessage('Pairing timed out. Please try again or use Telegram below.');
       return;
@@ -76,6 +89,16 @@ export function TestBot() {
         setPairingCode(data.pairingCode);
         setStatus('success');
         return;
+      }
+
+      if (!response.ok) {
+        // 404: request expired or never created. 400/401/403: client/auth error. Stop polling.
+        if (response.status === 404 || response.status === 400 || response.status === 401 || response.status === 403) {
+          setStatus('error');
+          setErrorMessage(data.error || `Pairing request failed (${response.status}).`);
+          return;
+        }
+        // 5xx and other transient errors: retry until the overall timeout.
       }
 
       pollRef.current = window.setTimeout(() => {
