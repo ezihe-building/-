@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Quote } from 'lucide-react';
+import { Quote, Play, Pause } from 'lucide-react';
 
 import sukuna1 from '@assets/generated_images/sukuna1.jpg';
 import sukuna2 from '@assets/generated_images/sukuna2.jpg';
@@ -78,34 +78,44 @@ export function SukunaSlideshow({
   className = '',
 }: SukunaSlideshowProps) {
   const [index, setIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % SUKUNA_SLIDES.length);
-    }, interval);
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
+
+  const nextSlide = useCallback(() => {
+    setIndex((prev) => (prev + 1) % SUKUNA_SLIDES.length);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion || isPaused) return;
+    const timer = setInterval(nextSlide, interval);
     return () => clearInterval(timer);
-  }, [interval]);
+  }, [interval, isPaused, nextSlide, reducedMotion]);
 
   const slide = SUKUNA_SLIDES[index];
 
   if (variant === 'background') {
     return (
       <div className={`absolute inset-0 overflow-hidden ${className}`}>
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.img
-            key={slide.image}
+            key={index}
             src={slide.image}
             alt="Sukuna artwork"
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.02 }}
-            transition={{ duration: 1.2, ease: 'easeInOut' }}
+            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.05 }}
+            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.02 }}
+            transition={reducedMotion ? { duration: 0.2 } : { duration: 1.2, ease: 'easeInOut' }}
             className="absolute inset-0 w-full h-full object-cover"
           />
         </AnimatePresence>
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-transparent to-background/95" />
-        <div className="absolute inset-0 bg-primary/5 mix-blend-overlay" />
       </div>
     );
   }
@@ -113,15 +123,15 @@ export function SukunaSlideshow({
   return (
     <div className={`relative overflow-hidden rounded-xl ${className}`}>
       <div className="relative aspect-[16/9] w-full bg-card">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.img
-            key={slide.image}
+            key={index}
             src={slide.image}
             alt="Sukuna artwork"
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: 40 }}
+            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, x: -40 }}
+            transition={reducedMotion ? { duration: 0.2 } : { duration: 0.6, ease: 'easeOut' }}
             className="absolute inset-0 w-full h-full object-cover"
           />
         </AnimatePresence>
@@ -153,7 +163,7 @@ export function SukunaSlideshow({
         </div>
       </div>
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
         {SUKUNA_SLIDES.map((_, i) => (
           <button
             key={i}
@@ -161,9 +171,18 @@ export function SukunaSlideshow({
             className={`w-2 h-2 rounded-full transition-all ${
               i === index ? 'bg-primary w-6' : 'bg-white/30 hover:bg-white/50'
             }`}
-            aria-label={`Go to slide ${i + 1}`}
+            aria-label={`Go to Sukuna slide ${i + 1}`}
+            aria-current={i === index ? 'true' : undefined}
           />
         ))}
+        <button
+          onClick={() => setIsPaused((p) => !p)}
+          className="ml-2 w-7 h-7 rounded-full glass flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+          aria-label={isPaused ? 'Play slideshow' : 'Pause slideshow'}
+          title={isPaused ? 'Play' : 'Pause'}
+        >
+          {isPaused ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
+        </button>
       </div>
     </div>
   );

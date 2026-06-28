@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Pause } from 'lucide-react';
 
 import sukuna6 from '@assets/generated_images/sukuna6.jpg';
 import sukuna7 from '@assets/generated_images/sukuna7.jpg';
@@ -25,26 +26,39 @@ export function HeroSukunaSlideshow({
   className = '',
 }: HeroSukunaSlideshowProps) {
   const [index, setIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, interval);
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
+
+  const nextSlide = useCallback(() => {
+    setIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion || isPaused) return;
+    const timer = setInterval(nextSlide, interval);
     return () => clearInterval(timer);
-  }, [interval]);
+  }, [interval, isPaused, nextSlide, reducedMotion]);
 
   return (
     <div className={`relative overflow-hidden rounded-2xl border border-primary/20 shadow-2xl ${className}`}>
       <div className="relative aspect-square sm:aspect-[4/5] md:aspect-[3/4] w-full max-w-md mx-auto bg-card">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.img
-            key={HERO_SLIDES[index].image}
+            key={index}
             src={HERO_SLIDES[index].image}
             alt={HERO_SLIDES[index].alt}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.8, ease: 'easeInOut' }}
+            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.05 }}
+            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
+            transition={reducedMotion ? { duration: 0.2 } : { duration: 0.8, ease: 'easeInOut' }}
             className="absolute inset-0 w-full h-full object-cover"
           />
         </AnimatePresence>
@@ -57,7 +71,7 @@ export function HeroSukunaSlideshow({
         </div>
       </div>
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3">
         {HERO_SLIDES.map((_, i) => (
           <button
             key={i}
@@ -65,9 +79,18 @@ export function HeroSukunaSlideshow({
             className={`h-1.5 rounded-full transition-all ${
               i === index ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50 w-1.5'
             }`}
-            aria-label={`Go to slide ${i + 1}`}
+            aria-label={`Go to Sukuna slide ${i + 1}`}
+            aria-current={i === index ? 'true' : undefined}
           />
         ))}
+        <button
+          onClick={() => setIsPaused((p) => !p)}
+          className="ml-2 w-7 h-7 rounded-full glass flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+          aria-label={isPaused ? 'Play slideshow' : 'Pause slideshow'}
+          title={isPaused ? 'Play' : 'Pause'}
+        >
+          {isPaused ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
+        </button>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Menu, X, TerminalSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '@assets/generated_images/reaper-logo.png';
+import logo from '@assets/generated_images/reaper-logo-sm.png';
 
 const NAV_LINKS = [
   { name: 'Home', href: '/' },

@@ -89,7 +89,7 @@ export function Home() {
       </SectionBackground>
 
       {/* Stats Strip */}
-      <SectionBackground withSukunaBackground className="relative z-20" withGlow glowPosition="top" sukunaCornerPosition="bottom-left" sukunaCornerSize="sm">
+      <SectionBackground className="relative z-20" withGlow glowPosition="top" sukunaCornerPosition="bottom-left" sukunaCornerSize="sm">
         <div className="bg-primary/95 border-y border-primary/50">
           <div className="container mx-auto px-4 py-4">
             <div className="flex flex-wrap justify-center gap-6 md:gap-12 text-sm md:text-base font-bold text-white uppercase tracking-widest text-center">
@@ -106,14 +106,14 @@ export function Home() {
       </SectionBackground>
 
       {/* Sukuna Quote Slideshow */}
-      <SectionBackground withSukunaBackground className="py-8" withGlow glowPosition="center" sukunaCornerPosition="bottom-right" sukunaCornerSize="lg">
+      <SectionBackground className="py-8" withGlow glowPosition="center" sukunaCornerPosition="bottom-right" sukunaCornerSize="lg">
         <div className="container mx-auto px-4 max-w-5xl relative z-10">
           <SukunaSlideshow interval={60000} variant="gallery" />
         </div>
       </SectionBackground>
 
       {/* Feature Highlights */}
-      <SectionBackground withGlow glowPosition="bottom-left" className="py-24" withSukunaBackground sukunaCornerPosition="bottom-left" sukunaCornerSize="md">
+      <SectionBackground withGlow glowPosition="bottom-left" className="py-24" sukunaCornerPosition="bottom-left" sukunaCornerSize="md">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-cinzel font-bold text-white mb-4">

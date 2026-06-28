@@ -1,6 +1,6 @@
 import { Link } from 'wouter';
 import { FaDiscord, FaGithub, FaTiktok, FaWhatsapp, FaTelegram } from 'react-icons/fa';
-import logo from '@assets/generated_images/reaper-logo.png';
+import logo from '@assets/generated_images/reaper-logo-sm.png';
 
 export function Footer() {
   return (
@@ -26,19 +26,19 @@ export function Footer() {
               Forged in darkness. Built for power. The ultimate WhatsApp automation and group management experience for power users.
             </p>
             <div className="flex items-center gap-4 pt-4">
-              <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
+              <a href="#" aria-label="Discord" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
                 <FaDiscord size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
+              <a href="#" aria-label="GitHub" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
                 <FaGithub size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
+              <a href="#" aria-label="TikTok" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
                 <FaTiktok size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
+              <a href="#" aria-label="WhatsApp" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
                 <FaWhatsapp size={18} />
               </a>
-              <a href="https://t.me/THE_REAPERDEV" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
+              <a href="https://t.me/THE_REAPERDEV" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="w-10 h-10 rounded-full glass flex items-center justify-center text-white/60 hover:text-primary hover:glow-red transition-all">
                 <FaTelegram size={18} />
               </a>
             </div>
