@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, VolumeX } from 'lucide-react';
@@ -48,6 +48,15 @@ export function SukunaVoice() {
   const [location] = useLocation();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [bubbleOpen, setBubbleOpen] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
 
   const voice = PAGE_VOICES[location] ?? PAGE_VOICES['/'];
 
@@ -88,9 +97,10 @@ export function SukunaVoice() {
       <AnimatePresence>
         {bubbleOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.9 }}
+            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.9 }}
+            transition={reducedMotion ? { duration: 0.1 } : undefined}
             className="max-w-xs sm:max-w-sm glass-card rounded-xl p-4 relative border-l-4 border-l-primary"
           >
             <button

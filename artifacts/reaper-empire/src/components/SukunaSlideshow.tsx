@@ -141,24 +141,37 @@ export function SukunaSlideshow({
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
           <div className="glass rounded-lg p-4 md:p-6 max-w-2xl mx-auto text-center">
             <Quote className="mx-auto mb-3 text-primary/60" size={24} />
-            <motion.p
-              key={slide.quote}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className="text-lg md:text-2xl font-cinzel font-bold text-white text-glow leading-relaxed"
-            >
-              "{slide.quote}"
-            </motion.p>
-            <motion.p
-              key={slide.context}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-              className="mt-3 text-sm md:text-base text-muted-foreground"
-            >
-              {slide.context}
-            </motion.p>
+            {reducedMotion ? (
+              <>
+                <p className="text-lg md:text-2xl font-cinzel font-bold text-white text-glow leading-relaxed">
+                  "{slide.quote}"
+                </p>
+                <p className="mt-3 text-sm md:text-base text-muted-foreground">
+                  {slide.context}
+                </p>
+              </>
+            ) : (
+              <>
+                <motion.p
+                  key={slide.quote}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="text-lg md:text-2xl font-cinzel font-bold text-white text-glow leading-relaxed"
+                >
+                  "{slide.quote}"
+                </motion.p>
+                <motion.p
+                  key={slide.context}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                  className="mt-3 text-sm md:text-base text-muted-foreground"
+                >
+                  {slide.context}
+                </motion.p>
+              </>
+            )}
           </div>
         </div>
       </div>
