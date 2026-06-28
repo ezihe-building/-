@@ -49,6 +49,7 @@ export function SukunaVoice() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [bubbleOpen, setBubbleOpen] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [voicesReady, setVoicesReady] = useState(false);
 
   useEffect(() => {
     const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -58,24 +59,51 @@ export function SukunaVoice() {
     return () => mql.removeEventListener('change', handler);
   }, []);
 
+  // Voices load asynchronously on most browsers; wait for them so we can pick the darkest one.
+  useEffect(() => {
+    if (!window.speechSynthesis) return;
+    const synth = window.speechSynthesis;
+    const loadVoices = () => setVoicesReady(synth.getVoices().length > 0);
+    loadVoices();
+    synth.addEventListener('voiceschanged', loadVoices);
+    return () => synth.removeEventListener('voiceschanged', loadVoices);
+  }, []);
+
   const voice = PAGE_VOICES[location] ?? PAGE_VOICES['/'];
+
+  const pickDarkVoice = useCallback(() => {
+    const voices = window.speechSynthesis?.getVoices() ?? [];
+    if (voices.length === 0) return null;
+
+    // Score voices: lower pitch/default voice language usually sounds deeper. Prefer explicit low/deep voice names.
+    const deepVoiceNames = /(fred|zarvox|trinoids|bad news|evil genius|venom|daniel|albert|david|mark|tom|alex|microsoft david|microsoft mark|google uk english male|amazon russell|amazon joey|amazon matthew|wavenet|deep voice|low pitch)/i;
+    const maleVoiceNames = /male|man|guy|boy/i;
+
+    const scored = voices.map((v) => {
+      let score = 0;
+      if (deepVoiceNames.test(v.name)) score += 100;
+      if (maleVoiceNames.test(v.name)) score += 10;
+      if (v.lang.startsWith('en')) score += 5;
+      return { voice: v, score };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+    return scored[0].voice;
+  }, []);
 
   const speak = useCallback(() => {
     if (!window.speechSynthesis) return;
 
     window.speechSynthesis.cancel();
 
+    // Build a slower, more menacing delivery.
     const utterance = new SpeechSynthesisUtterance(voice.quote);
-    utterance.rate = 0.9;
-    utterance.pitch = 0.75;
-    utterance.volume = 1;
+    utterance.rate = 0.72;       // slow and deliberate
+    utterance.pitch = 0.62;      // deep, demonic register
+    utterance.volume = 1;        // full presence
+    utterance.lang = 'en-US';    // keep consistent
 
-    const voices = window.speechSynthesis.getVoices();
-    const preferredVoice =
-      voices.find((v) => /google uk english male|daniel|fred|albert|zarvox|trinoids|bad news|evil genius|venom/i.test(v.name)) ||
-      voices.find((v) => /male/i.test(v.name)) ||
-      voices[0];
-
+    const preferredVoice = pickDarkVoice();
     if (preferredVoice) {
       utterance.voice = preferredVoice;
     }
@@ -85,7 +113,7 @@ export function SukunaVoice() {
     utterance.onerror = () => setIsSpeaking(false);
 
     window.speechSynthesis.speak(utterance);
-  }, [voice]);
+  }, [voice, pickDarkVoice]);
 
   const stop = useCallback(() => {
     window.speechSynthesis?.cancel();
