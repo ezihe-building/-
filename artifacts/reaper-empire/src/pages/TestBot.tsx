@@ -1,32 +1,91 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2, Copy, CheckCircle2 } from 'lucide-react';
 import { FaTelegram } from 'react-icons/fa';
 import { SectionBackground } from '../components/SectionBackground';
 import { SukunaSlideshow } from '../components/SukunaSlideshow';
 
-type ConnectionState = 'idle' | 'loading' | 'success' | 'error';
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+
+type ConnectionState = 'idle' | 'loading' | 'polling' | 'success' | 'error';
 
 export function TestBot() {
   const [phone, setPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+1');
   const [status, setStatus] = useState<ConnectionState>('idle');
   const [pairingCode, setPairingCode] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const pollRef = useRef<number | null>(null);
 
-  const handleConnect = (e: React.FormEvent) => {
+  const fullPhone = `${countryCode}${phone}`;
+
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) {
+        window.clearTimeout(pollRef.current);
+      }
+    };
+  }, []);
+
+  const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone) return;
 
     setStatus('loading');
     setPairingCode(null);
+    setErrorMessage(null);
 
-    // Simulate API call
-    // TODO: POST /api/pair { phoneNumber: countryCode + phone } → returns { pairingCode }
-    setTimeout(() => {
-      // For demo purposes, we show that it requires a real backend
+    if (pollRef.current) {
+      window.clearTimeout(pollRef.current);
+      pollRef.current = null;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/api/pair`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: fullPhone }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to request pairing code');
+      }
+
+      setStatus('polling');
+      pollForCode(fullPhone);
+    } catch (err) {
       setStatus('error');
-    }, 3000);
+      setErrorMessage(err instanceof Error ? err.message : 'Connection failed');
+    }
+  };
+
+  const pollForCode = async (phoneNumber: string, attempt = 1) => {
+    if (attempt > 60) {
+      setStatus('error');
+      setErrorMessage('Pairing timed out. Please try again or use Telegram below.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/api/pair/status?phoneNumber=${encodeURIComponent(phoneNumber)}`);
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.status === 'completed' && data.pairingCode) {
+        setPairingCode(data.pairingCode);
+        setStatus('success');
+        return;
+      }
+
+      pollRef.current = window.setTimeout(() => {
+        pollForCode(phoneNumber, attempt + 1);
+      }, 3000);
+    } catch {
+      pollRef.current = window.setTimeout(() => {
+        pollForCode(phoneNumber, attempt + 1);
+      }, 3000);
+    }
   };
 
   const copyToClipboard = () => {
@@ -63,7 +122,7 @@ export function TestBot() {
                     <select
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
-                      disabled={status === 'loading'}
+                      disabled={status === 'loading' || status === 'polling'}
                       className="bg-background/80 border border-white/10 rounded-md px-3 py-3 text-white focus:outline-none focus:border-primary w-24 font-mono"
                     >
                       <option value="+1">+1 (US)</option>
@@ -79,7 +138,7 @@ export function TestBot() {
                       placeholder="Enter your number..."
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                      disabled={status === 'loading'}
+                      disabled={status === 'loading' || status === 'polling'}
                       className="flex-1 bg-background/80 border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-primary font-mono placeholder:text-white/30 transition-colors"
                     />
                   </div>
@@ -87,12 +146,12 @@ export function TestBot() {
 
                 <button
                   type="submit"
-                  disabled={status === 'loading' || !phone}
+                  disabled={status === 'loading' || status === 'polling' || !phone}
                   className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-md uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:glow-red relative overflow-hidden group"
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
-                    {status === 'loading' ? (
-                      <><Loader2 className="animate-spin" size={20} /> CONNECTING...</>
+                    {status === 'loading' || status === 'polling' ? (
+                      <><Loader2 className="animate-spin" size={20} /> {status === 'polling' ? 'WAITING FOR BOT...' : 'CONNECTING...'}</>
                     ) : (
                       "CONNECT"
                     )}
@@ -103,8 +162,9 @@ export function TestBot() {
                 <div className="flex items-center justify-center gap-2 text-sm font-mono mt-4">
                   {status === 'idle' && <><span className="w-2 h-2 rounded-full bg-gray-500"></span> <span className="text-gray-400">Ready</span></>}
                   {status === 'loading' && <><span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span> <span className="text-yellow-500">Connecting to Empire Servers...</span></>}
+                  {status === 'polling' && <><span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span> <span className="text-yellow-500">Waiting for pairing code from Telegram bot...</span></>}
                   {status === 'success' && <><span className="w-2 h-2 rounded-full bg-green-500"></span> <span className="text-green-500">Connected</span></>}
-                  {status === 'error' && <><span className="w-2 h-2 rounded-full bg-destructive"></span> <span className="text-destructive">Failed: Backend not connected</span></>}
+                  {status === 'error' && <><span className="w-2 h-2 rounded-full bg-destructive"></span> <span className="text-destructive">{errorMessage || 'Failed: Backend not connected'}</span></>}
                 </div>
               </form>
 
