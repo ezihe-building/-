@@ -6,6 +6,7 @@ import { SectionBackground } from '../components/SectionBackground';
 import { SukunaSlideshow } from '../components/SukunaSlideshow';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+console.log('[Pairing] API_BASE:', API_BASE || '(empty — will call /api on the same host)');
 
 type ConnectionState = 'idle' | 'loading' | 'polling' | 'success' | 'error';
 
@@ -69,7 +70,12 @@ export function TestBot() {
       pollForCode(fullPhone);
     } catch (err) {
       setStatus('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Connection failed');
+      const base = err instanceof Error ? err.message : 'Connection failed';
+      setErrorMessage(
+        API_BASE
+          ? `${base} (${API_BASE})`
+          : `${base} — VITE_API_BASE_URL is not set. The website needs a deployed backend URL to reach the pairing API.`,
+      );
     }
   };
 
