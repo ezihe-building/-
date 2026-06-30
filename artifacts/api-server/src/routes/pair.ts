@@ -1,15 +1,9 @@
 import { Router, type IRouter } from "express";
+import { setPendingPairing, completePairing, getPairing, cleanupExpired } from "../lib/pairing-store";
 
 const router: IRouter = Router();
 
-const PAIRING_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 const MAX_POLL_ATTEMPTS = 100; // 100 attempts * 3s = 5 minutes (keep in sync with frontend polling)
-
-// In-memory store for pairing requests (per-process; good enough for a single-instance bot)
-const pairingStore = new Map<
-  string,
-  { status: "pending" | "completed"; pairingCode: string | null; requestedAt: number }
->();
 
 const TELEGRAM_BOT_TOKEN = process.env["TELEGRAM_BOT_TOKEN"];
 const TELEGRAM_ADMIN_CHAT_ID = process.env["TELEGRAM_ADMIN_CHAT_ID"];
@@ -20,15 +14,6 @@ function isValidPhoneNumber(value: unknown): value is string {
 
 function isValidPairingCode(value: unknown): value is string {
   return typeof value === "string" && /^[0-9A-Za-z\-]{4,20}$/.test(value.trim());
-}
-
-function cleanupExpired() {
-  const now = Date.now();
-  for (const [phone, record] of pairingStore) {
-    if (record.status === "pending" && now - record.requestedAt > PAIRING_TIMEOUT_MS) {
-      pairingStore.delete(phone);
-    }
-  }
 }
 
 function extractBearerToken(req: { headers: { authorization?: string } }): string | null {
@@ -49,7 +34,7 @@ async function sendTelegramNotification(phoneNumber: string): Promise<{ ok: bool
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: TELEGRAM_ADMIN_CHAT_ID,
-        text: `New pairing request: ${phoneNumber}\nPush the code back to POST /api/pair/code with the bot token in the Authorization header.`,
+        text: `New pairing request: ${phoneNumber}\n\nSend this command to the bot and the code will appear on the website automatically:\n/pair ${phoneNumber}`,
       }),
     });
 
@@ -77,11 +62,7 @@ router.post("/pair", async (req, res) => {
   }
 
   const normalized = phoneNumber.trim();
-  pairingStore.set(normalized, {
-    status: "pending",
-    pairingCode: null,
-    requestedAt: Date.now(),
-  });
+  setPendingPairing(normalized);
 
   const notification = await sendTelegramNotification(normalized);
 
@@ -93,7 +74,7 @@ router.post("/pair", async (req, res) => {
   });
 });
 
-// Telegram bot pushes the pairing code back here
+// Telegram bot pushes the pairing code back here (webhook path)
 // Requires the bot token in the Authorization: Bearer <token> header
 router.post("/pair/code", (req, res) => {
   cleanupExpired();
@@ -113,18 +94,11 @@ router.post("/pair/code", (req, res) => {
 
   const normalizedPhone = phoneNumber.trim();
   const normalizedCode = pairingCode.trim();
-  const existing = pairingStore.get(normalizedPhone);
 
-  if (!existing || existing.status !== "pending") {
+  if (!completePairing(normalizedPhone, normalizedCode)) {
     res.status(404).json({ error: "No pending pairing request found for this number" });
     return;
   }
-
-  pairingStore.set(normalizedPhone, {
-    status: "completed",
-    pairingCode: normalizedCode,
-    requestedAt: existing.requestedAt,
-  });
 
   res.json({ status: "completed", phoneNumber: normalizedPhone, pairingCode: normalizedCode });
 });
@@ -141,7 +115,7 @@ router.get("/pair/status", (req, res) => {
   }
 
   const normalized = phoneNumber.trim();
-  const record = pairingStore.get(normalized);
+  const record = getPairing(normalized);
   if (!record) {
     res.status(404).json({ error: "No pairing request found" });
     return;
